@@ -1,3 +1,0 @@
-insert into test.owners (name, location) values ('lakeside', ST_GeomFromText('POINT(-27.499271 153.015466)', 900913));
-
-select owner, count(*) from test.cats c, test.owners o where o.oid = c.owner group by owner;

@@ -112,12 +112,5 @@ def get_readings(attr, time_from, time_to):
 def serve_static(filename):
   return send_from_directory(app.config['IMG_FOLDER'], filename)
 
-def build_geojson(points, number_owned):
-  geo = {"type": "GeometryCollection", "geometries": []}
-  for i, point in enumerate(points):
-    geo['geometries'].append({"circle": {"coordinates": point,
-      "radius": number_owned[i] * 10}})
-  return geo
-
 if __name__ == "__main__":
   app.run(debug=True)
