@@ -1,0 +1,88 @@
+html, body {
+  height:100%;
+  font-family: 'Ubuntu' !important;
+}
+
+body {
+  background-color: #000000;
+}
+
+select {
+  height: 15px;
+  margin: 0;
+}
+
+h1 {
+  color: #ffffff;
+}
+
+.top-bar {
+  background-color: #555555;
+  color: #ffffff;
+  font-size: 0.8rem;
+  padding-left: 2em;
+  padding-right: 5em;
+}
+
+.menu-icon {
+  width: 20px;
+  height: 15px;
+  vertical-align: top;
+}
+
+.side-nav {
+  position: absolute;
+  background-color: #222222;
+  color: #ffffff;
+  font-size: 0.8rem;
+  float: left;
+  z-index: 10;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 0.5s,opacity 0.5s linear;
+}
+
+.side-nav-toggle {
+  visibility: visible !important;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.side-nav ul {
+  margin: 0;
+}
+
+.side-nav ul li {
+  display: block;
+  padding: 0.8em 7em 0.8em 3em;
+  border-bottom: 1px solid #333333;
+}
+
+.side-nav ul li:last-child {
+  border: 0;
+}
+
+#container {
+  margin-top: 1%;
+  height: 90%;
+}
+
+#controls, #debug-panel {
+  background-color: #333333;
+  border: 1px solid #555555;
+  color: #ffffff;
+  height: 100%;
+  padding-top: 0.5em;
+  font-size: 0.8em;
+}
+
+#controls [type='checkbox'] + label, #controls [type='radio'] + label {
+  font-size: 0.8em;
+  color: #ffffff;
+}
+
+#map {
+  border: 1px solid #ffffff;
+  height: 100%;
+  margin: 0 1rem;
+}

@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div id="container" class="row">
+    <div id="controls" class="large-3 columns">
+      DISPLAY:
+	<form>
+	  <input id="circles" type="checkbox" checked><label for="circles">Circles</label>
+	</form>
+    </div>
+    <div id="map" class="large-6 columns">
+    </div>
+    <div id="debug-panel" class="large-2 columns end">
+	{{ debug }}</br>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  <script src="../static/js/map.js"></script>
+{% endblock %}

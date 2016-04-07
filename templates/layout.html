@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ page_title }}</title>
+  <link rel="stylesheet" href="../static/modules/foundation-6/css/foundation.css" />
+  <link rel="stylesheet" href="../static/modules/icons/foundation-icons.css" />
+  <link rel="stylesheet" href="../static/modules/leaflet/leaflet.css" />
+  <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../static/css/layout.css" />
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script src="../static/modules/foundation-6/js/foundation.js"></script>
+  <script src="../static/modules/leaflet/leaflet.js"></script>
+  <script src="../static/modules/d3/d3.js"></script>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="top-bar-title">
+	<span class="menu-icon" data-toggle></span>
+      &emsp;{{ site_name }}
+    </div>
+    <div class="top-bar-right">Logged in as {{ username }}</div>
+  </div>
+
+  <div class="side-nav">
+    <ul>
+      <li><a href=""><i class="fi-projection-screen"></i>&emsp;About</a></li>
+      <li><a href=""><i class="fi-map"></i>&emsp;Map</a></li>
+      <li><a href=""><i class="fi-graph-bar"></i>&emsp;Graphs & Charts</a></li>
+    </ul>
+  </div>
+
+  {% block content %}
+  {% endblock %}
+
+  <script src="../static/js/layout.js"></script>
+  {% block javascript %}
+  {% endblock %}
+</body>
+</html>
+
