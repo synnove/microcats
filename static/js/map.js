@@ -76,7 +76,6 @@ d3.json("https://microcats.uqcloud.net/sensors", function (data) {
     .attr("r", 40);
 
   $("#circles").change(function(){  
-    console.log(this.checked); 
     if (this.checked) {
       feature.style("opacity", .7);
     } else {

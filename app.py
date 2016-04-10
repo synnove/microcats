@@ -45,10 +45,13 @@ def map_page():
 
 @app.route("/viz")
 def visualisations_page():
-  debug = ""
+  debug = db.get_sensor_list()
+  station_list = db.get_station_info()
+  sensor_list = db.get_sensor_list()
 
   return render_template("graphs.html", page_title="im lots of things",
-    site_name="microcats", username=g.username,
+    site_name="microcats", username=g.username, station_list=station_list,
+    sensor_list=sensor_list,
     debug=debug)
 
 # API PAGES BELOW -----------------------------------------------------------
@@ -56,7 +59,7 @@ def visualisations_page():
 @app.route("/sensors")
 def get_sensors():
   sensor_json = {'sensors': []}
-  query = db.get_sensor_info()
+  query = db.get_station_info()
 
   for sid, description, name, x, y in query:
     new_sensor = {"name": name, "sensor_ID": sid, "x_coord": x, "y_coord": y}
@@ -84,10 +87,10 @@ def get_readings(attr, time_from, time_to):
     return render_template("cats.html", page_title="DID YOU ASK FOR CATS",
       site_name="microcats", username=g.username)
   else:
-    sensor_list = db.get_sensor_info()
+    station_list = db.get_station_info()
     result_json = {'results': []}
 
-    for sensor in sensor_list:
+    for station in station_list:
       sid = sensor[0]
       sensor_data = {}
       sensor_data[str(sid)] = []
@@ -107,6 +110,21 @@ def get_readings(attr, time_from, time_to):
         sensor_data[str(sid)].append(reading)
       result_json['results'].append(sensor_data)
     return jsonify(result_json)
+
+@app.route("/average/<sid>/<attr>/<time_from>", 
+  methods=['GET', 'POST'])
+def get_readings_average(sid, attr, time_from):
+  result_json = {'results': []}
+
+  data = db.get_hourly_average(int(sid), attr.upper(), time_from)
+  if (not data):
+    return jsonify({ 'err': "No results found for query" })
+  for value, time in data:
+    sensor_data = {}
+    sensor_data['time'] = str(time)
+    sensor_data['value'] = float(value)
+    result_json['results'].append(sensor_data)
+  return jsonify(result_json)
 
 @app.route('/img/<path:filename>')
 def serve_static(filename):

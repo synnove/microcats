@@ -5,10 +5,39 @@
     <div id="controls" class="large-3 columns">
       DISPLAY:
 	<form>
-	  <input id="circles" type="checkbox" checked><label for="circles">Circles</label>
+	  <label>Select Visualisation Type
+	    <select>
+  	      <option value="heatmap">Heat Map</option>
+  	      <option value="something">something</option>
+  	      <option value="something">something</option>
+  	      <option value="something">something</option>
+  	    </select>
+	  </label>
+	  <fieldset>
+	    <legend>Select a Station</legend>
+	    {% for station in station_list %}
+	    <input type="radio" name="station" value="{{ station[0] }}" 
+	      {% if station[0] == 1 %} checked="checked" {% endif %}
+	      id="{{ station[0] }}">
+	    <label for="{{ station[0] }}">{{ station[2] }}</label>
+	    {% endfor %}
+	  </fieldset>
+	  <fieldset>
+	    <legend>Select a Sensor</legend>
+	    {% for sensor in sensor_list %}
+	      <input type="radio" name="sensor" value="{{ sensor[1] }}" 
+		{% if sensor[0] == 0 %} checked="checked" {% endif %}
+		id="{{ sensor[1] }}">
+	      <label for="{{ sensor[1] }}">{{ sensor[1] }}</label>
+	      {% if sensor[0]%2 == 1 %} </br> {% endif %}
+	    {% endfor %}
+	  </fieldset>
+	  <label>Select a Time
+	    <input type="datetime">
+	  </label>
 	</form>
     </div>
-    <div id="map" class="large-6 columns">
+    <div id="chart" class="large-6 columns">
     </div>
     <div id="debug-panel" class="large-2 columns end">
 	{{ debug }}</br>
@@ -17,5 +46,5 @@
 {% endblock %}
 
 {% block javascript %}
-  <script src="../static/js/map.js"></script>
+  <script src="../static/js/heatmap.js"></script>
 {% endblock %}
