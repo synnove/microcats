@@ -1,0 +1,15 @@
+.reveal section img {
+  border: 0;
+  border-radius: 10px;
+  padding: 2rem;
+  height: 22rem;
+  width: auto;
+}
+
+.reveal section ul {
+  float: left;
+}
+
+.reveal blockquote {
+  font-size: 0.5em;
+}

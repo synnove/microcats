@@ -1,19 +1,47 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <div id="container" class="row">
-    <div id="controls" class="large-3 columns">
-      DISPLAY:
-	<form>
-	  <input id="circles" type="checkbox" checked><label for="circles">Circles</label>
-	</form>
+    <div class="large-12 columns">
+      <div id="controls">
+
+	<div class="large-3 columns"><form id="map-viz">
+          <label>Select Visualisation Type
+	    <br>
+	    <select>
+    	      <option value="circles">Circles</option>
+    	      <option value="contour">Contour Map</option>
+    	    </select>
+          </label>
+        </form></div>
+
+	<div class="large-3 columns"><form id="map-time">
+          <label>Select Visualisation Type
+	    <br>
+	    <select>
+    	      <option value="circles">Circles</option>
+    	      <option value="contour">Contour Map</option>
+    	    </select>
+          </label>
+        </form></div>
+
+	<div class="large-6 columns"><form id="viz-opts">
+          <legend>Select a Sensor</legend>
+          <fieldset>
+	    {% for i, sensor in sensors %}
+	      <input type="radio" name="sensor" value="{{ sensor }}"
+    	      {% if i == 0 %}checked{% endif %}
+    	      ></input>
+    	      <label for="{{ sensor }}">{{ sensor }}</label>
+            {% endfor %}
+          </fieldset>
+        </form></div>
+
+      </div>
     </div>
-    <div id="map" class="large-6 columns">
+    <div class="large-12 columns">
+      <div id="map">
+      </div>
     </div>
-    <div id="debug-panel" class="large-2 columns end">
-	{{ debug }}</br>
-    </div>
-  </div>
 {% endblock %}
 
 {% block javascript %}

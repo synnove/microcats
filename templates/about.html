@@ -1,21 +1,42 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <div id="container" class="row">
-    <div id="controls" class="large-3 columns">
-      DISPLAY:
-	<form>
-	  <input id="circles" type="checkbox" checked><label for="circles">Circles</label>
-	</form>
-    </div>
-    <div id="map" class="large-6 columns">
-    </div>
-    <div id="debug-panel" class="large-2 columns end">
-	{{ debug }}</br>
-    </div>
+  <div id="about" class="large-offset-1 large-10 columns end">
+    <h4 class="text-center">About the project</h4>
+    {{ debug }}
   </div>
+  {% for station in station_info %}
+    <div class="large-4 columns end">
+      <div class="info">
+        <b><a href="https://microcats.uqcloud.net/{{ station.name }}">
+        <i class="fi-info"></i> STATION INFORMATION</a></b><br>
+        Name: {{ station.name }}<br>
+        ID: <span class="id">{{ station.sid }}</span><br>
+        Description: {{ station.desc }}<br>
+        Location: {{ station.location }}<br>
+        Deployed: {{ station.birthday }}<br>
+        Last contact: {{ station.last }}<br>
+        Status: {{ station.status }}<br>
+        <hr>
+        <b><i class="fi-results"></i> STATISTICS</b><br>
+  	<div class="row">
+  	  <div class="large-3 columns">Sensor</div>
+  	  <div class="large-3 columns">High</div>
+  	  <div class="large-3 columns">Low</div>
+  	  <div class="large-3 columns">Avg</div>
+  	</div>
+        {% for sensor in station["values"] %}
+  	<div class="row">
+  	  <div class="large-3 columns">{{ sensor }}:</div>
+  	  <div class="large-3 columns">{{ station["values"][sensor][0] }}</div>
+  	  <div class="large-3 columns">{{ station["values"][sensor][1] }}</div>
+  	  <div class="large-3 columns">{{ station["values"][sensor][2] }}</div>
+  	</div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
 {% endblock %}
 
 {% block javascript %}
-  <script src="../static/js/map.js"></script>
 {% endblock %}

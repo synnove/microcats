@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ page_title }}</title>
+  <link rel="stylesheet" href="../static/modules/reveal/css/reveal.css">
+  <link rel="stylesheet" href="../static/modules/reveal/css/theme/sky.css">
+  <link rel="stylesheet" href="../static/css/presentation.css">
+  <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+	<h3>Building a Wireless Sensor Network
+	to Enable Online Real-time Microclimate Analysis at UQ</h3>
+	<br>Crystal Chua<br>
+      </section>
+
+      <section>
+	<h3>Part I</h3>
+	Building a Wireless Sensor Network
+      </section>
+
+      <section>
+	<section>
+	  <h3>A Wireless Sensor Network (WSN)</h3>
+	  <ul>
+	    <li>Consists of multiple sensor nodes</li>
+	    <li>Communicating wirelessly</li>
+	    <li>With a gateway</li>
+	    <li>That aggregates data from the sensors</li>
+	    <li>And sends it on</li>
+	  </ul>
+	</section>
+	<section>
+	  <h3>Network Topologies</h3>
+	  <img src="https://microcats.uqcloud.net/img/wsn-topology.png">
+	</section>
+	<section>
+	  <h3>Why WSNs?</h3>
+	  <ul>
+	    <li>Nodes are cheap and require low power</li>
+	    <li>Little management required</li>
+	    <li>Collect lots of data in short intervals</li>
+	    <li>Collect lots of data across a wide area</li>
+	  </ul>
+	</section>
+      </section>
+
+      <section>
+      	<section>
+	  <h3>What we're working with</h3>
+	  <ul>
+	    <li>4x Waspmotes</li>
+	    <li>1x Meshlium</li>
+	    <li>1x uqcloud zone</li>
+	  </ul>
+	</section>
+      	<section>
+	  <h3>Waspmotes</h3>
+	  <ul>
+	    <li>ATmega1281 microcontroller</li>
+	    <li>Zigbee radio</li>
+	    <li>Solar panels!</li>
+	  </ul>
+	  <img src="https://microcats.uqcloud.net/img/waspmote.png">
+	</section>
+      	<section>
+	  <h3>They're equipped with sensors</h3>
+	  <ul>
+	    <li>Temperature</li>
+	    <li>Humidity</li>
+	    <li>CO</li>
+	    <li>CO2</li>
+	    <li>O3</li>
+	    <li>With these we can measure pollution levels</li>
+	  </ul>
+	</section>
+      	<section>
+	  <h3>Meshlium</h3>
+	  <ul>
+	    <li>Modified Debian</li>
+	    <li>Zigbee radio</li>
+	    <li>Wifi AP</li>
+	    <li>Ethernet connection</li>
+	    <li>No SSH access..</li>
+	  </ul>
+	  <img src="https://microcats.uqcloud.net/img/meshlium.png">
+	</section>
+      	<section>
+	  <h3>uqcloud zone</h3>
+	  <ul>
+	    <li>Ubuntu 14.04.3 Trusty Tahr</li>
+	    <li>Nginx web server</li>
+	    <li>PostgreSQL database</li>
+	    <li>MQTT broker</li>
+	  </ul>
+	</section>
+      </section>
+
+      <section>
+	<h3>System Architecture</h3>
+	<img src="https://microcats.uqcloud.net/img/sysarch2.svg">
+      </section>
+
+      <section>
+	<h3>Part II</h3>
+	Online Real-time Microclimate Analysis
+      </section>
+
+      <section>
+	<section>
+      	  <h3>Online Real-time Microclimate Analysis</h3>
+      	  <ul>
+      	    <li>Having raw data is good for analysis and number-crunching</li>
+      	    <li>We also want to do interesting things with the data collected</li>
+      	    <li>Visualising data makes it easier to understand it at a glance</li>
+      	  </ul>
+      	</section>
+	<section>
+      	  <h3>But..</h3>
+      	  <ul>
+      	    <li>Creating useful visualisations is difficult</li>
+      	    <li>Important to consider how to present data</li>
+      	    <li>Without overwhelming or confusing the viewer</li>
+      	  </ul>
+      	</section>
+	<section>
+	  <img src="https://microcats.uqcloud.net/img/hex-map.png"><br>
+	  <blockquote>D. Hoang, et al., ”Processing and Visualizing Traffic Pollution Data in Hanoi City from a Wireless Sensor Network”, 
+	  2013 IEEE 38th Conference on Local Computer Networks Workshops (LCN Workshops), 2013.</blockquote>
+      	</section>
+      </section>
+
+      <section>
+	<h3>Part III</h3>
+	Progress
+      </section>
+
+      <section>
+	<h3>Server Setup</h3>
+      	  <ul>
+      	    <li>Nginx web server</li>
+      	    <li>Flask web application</li>
+      	    <li>MQTT broker</li>
+      	    <li>Postgres database with two tables</li>
+	      <ul>
+		<li>Sensor information</li>
+      	    	<li>Collected data</li>
+      	    	<li>Data used is constructed from a Gatton dataset</li>
+	      </ul>
+      	  </ul>
+      </section>
+      <section>
+	<h3>WSN setup</h3>
+  	<ul>
+  	  <li>Meshlium connected to UQ network</li>
+  	  <li>Waspmotes active and streaming data</li>
+  	  <li>Meshlium streaming data to server via MQTT</li>
+  	</ul>
+      </section>
+
+      <section>
+	<section>
+	  <h3>Web application</h3>
+      	  <ul>
+      	    <li>Map View</li>
+      	    <li>Station Overview</li>
+      	    <li>Station Info Page</li>
+      	    <li>Day-Hour Chart</li>
+      	    <li>Line Graphs</li>
+      	  </ul>
+	</section>
+      	<section>
+	  <h3>Map View</h3>
+	</section>
+	<section data-background="https://microcats.uqcloud.net/img/mc-map.png"></section>
+      	<section>
+	  <h3>Station Info Page</h3>
+	</section>
+	<section data-background="https://microcats.uqcloud.net/img/mc-st-isolde.png"></section>
+      	<section>
+	  <h3>Station Overview</h3>
+	</section>
+	<section data-background="https://microcats.uqcloud.net/img/mc-about.png"></section>
+      	<section>
+	  <h3>Day-Hour Chart</h3>
+	</section>
+	<section data-background="https://microcats.uqcloud.net/img/mc-dh-aurora.png"></section>
+	<section data-background="https://microcats.uqcloud.net/img/mc-dh-isolde.png"></section>
+	<section data-background="https://microcats.uqcloud.net/img/mc-dh-eponine.png"></section>
+      	<section>
+	  <h3>Line Graphs</h3>
+	</section>
+	<section data-background="https://microcats.uqcloud.net/img/mc-lg-do.png"></section>
+	<section data-background="https://microcats.uqcloud.net/img/mc-lg-electro.png"></section>
+      </section>
+
+      <section>
+	<h3>Challenges</h3>
+	<ul>
+	  <li>Lack of SSH access to meshlium - debugging is difficult</li>
+	  <li>Inflexibility in meshlium programming</li>
+	  <li>Delays in Waspmote deployment</li>
+	  <ul>
+	    <li>Waspmotes unable to use eduroam (auth issues)</li>
+	    <li>ZigBee requires LoS between nodes and meshlium</li>
+	    <li>Deployment pending approval from P&F</li>
+	  </ul>
+	</ul>
+      </section>
+
+      <section>
+	<h3>Future work</h3>
+	<ul>
+	  <li>Database backup system</li>
+	  <li>Refine UI design</li>
+	  <li>Refine visualisations</li>
+	  <ul>
+	    <li>Animate changes over time</li>
+	    <li>Add more types of visualisations</li>
+	  </ul>
+	</ul>
+      </section>
+
+      <section>
+	<h3>Questions?</h3>
+      </section>
+    </div>
+  </div>
+  <script src="../static/modules/reveal/js/reveal.js"></script>
+  <script>
+    Reveal.initialize();
+  </script>
+</body>
+</html>
+

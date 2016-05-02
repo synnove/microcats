@@ -1,50 +1,53 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <div id="container" class="row">
-    <div id="controls" class="large-3 columns">
-      DISPLAY:
-	<form>
+  <div id="error" class="reveal text-center small" data-reveal>Could not find any data. Please try again!</div>
+  <div class="large-12 columns">
+    <div id="controls">
+
+      <form id="viz-type">
+	<div class="large-3 columns">
 	  <label>Select Visualisation Type
+	    <br>
 	    <select>
-  	      <option value="heatmap">Heat Map</option>
-  	      <option value="something">something</option>
-  	      <option value="something">something</option>
-  	      <option value="something">something</option>
+  	      <option value="dh-chart">Day-Hour Chart</option>
+  	      <option value="line-graph">Line Graph</option>
+  	      <option value="something">???</option>
+  	      <option value="something">???</option>
   	    </select>
 	  </label>
-	  <fieldset>
-	    <legend>Select a Station</legend>
-	    {% for station in station_list %}
-	    <input type="radio" name="station" value="{{ station[0] }}" 
-	      {% if station[0] == 1 %} checked="checked" {% endif %}
-	      id="{{ station[0] }}">
-	    <label for="{{ station[0] }}">{{ station[2] }}</label>
-	    {% endfor %}
-	  </fieldset>
-	  <fieldset>
-	    <legend>Select a Sensor</legend>
-	    {% for sensor in sensor_list %}
-	      <input type="radio" name="sensor" value="{{ sensor[1] }}" 
-		{% if sensor[0] == 0 %} checked="checked" {% endif %}
-		id="{{ sensor[1] }}">
-	      <label for="{{ sensor[1] }}">{{ sensor[1] }}</label>
-	      {% if sensor[0]%2 == 1 %} </br> {% endif %}
-	    {% endfor %}
-	  </fieldset>
-	  <label>Select a Time
-	    <input type="datetime">
-	  </label>
-	</form>
+	</div>
+
+	<div class="large-3 columns">
+	  <label>Select Date and Time</label>
+	  <div class="input-group">
+	    <input class="input-group-field" type="date">
+	    <div class="input-group-button">
+	      <input type="submit" class="small button" value="Update">
+	    </div>
+	  </div>
+	  <input type="button" class="small button timeframe" value="Week" disabled>
+	  <input type="button" class="small button timeframe" value="Month">
+	  <input type="button" class="small button timeframe" value="Year">
+	</div>
+      </form>
+
+      <div class="large-6 columns">
+      <form id="chart-opts">
+      </form>
+      </div>
+
     </div>
-    <div id="chart" class="large-6 columns">
-    </div>
-    <div id="debug-panel" class="large-2 columns end">
-	{{ debug }}</br>
+  </div>
+  <div class="large-12 columns">
+    <div id="chart">
     </div>
   </div>
 {% endblock %}
 
 {% block javascript %}
-  <script src="../static/js/heatmap.js"></script>
+  <script type="text/javascript" src="../static/js/set_default_time.js"></script>
+  <script type="text/javascript" src="../static/js/dh-chart.js"></script>
+  <script type="text/javascript" src="../static/js/line-graph.js"></script>
+  <script type="text/javascript" src="../static/js/draw_charts.js"></script>
 {% endblock %}

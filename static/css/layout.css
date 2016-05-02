@@ -7,11 +7,12 @@ body {
   background-color: #000000;
 }
 
-h1 {
+h1, h4 {
   color: #ffffff;
+  font-family: 'Ubuntu' !important;
 }
 
-select, [type='datetime'] {
+select, .input-group [type='date'] {
   height: 1.8em;
   margin: 0;
   margin-bottom: 0.5em;
@@ -25,6 +26,30 @@ label {
 
 legend {
   margin: 0;
+}
+
+i.fi-info.large {
+  font-size: 2em;
+}
+
+.row {
+  max-width: 95%;
+}
+
+.button {
+  margin: 0;
+  vertical-align: bottom;
+  height: 2em;
+  padding: 0.1em 0.5em;
+}
+
+.button[disabled] {
+  opacity: 0.75;
+  color: #000000;
+}
+
+.input-group-field {
+  border: 0;
 }
 
 .top-bar {
@@ -78,13 +103,33 @@ legend {
   height: 90%;
 }
 
-#controls, #debug-panel {
+#controls, #debug-panel, #about, .info {
   background-color: #333333;
   border: 1px solid #555555;
   color: #ffffff;
-  height: 100%;
-  padding-top: 0.5em;
   font-size: 0.8em;
+  margin-bottom: 0.5em;
+}
+
+#controls, #debug-panel {
+  height: 100%;
+  padding: 0.5em 1em;
+}
+
+#controls:after {
+  content:"";
+  display:block;
+  clear:both;
+}
+
+#about {
+  height: 5%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.info {
+  padding: 1.2em 1em;
 }
 
 #controls [type='checkbox'] + label, #controls [type='radio'] + label {
@@ -93,18 +138,21 @@ legend {
 
 #map, #chart {
   border: 1px solid #ffffff;
-  height: 100%;
-  margin: 0 1rem;
+  height: 30rem;
+  background-color: #333333;
+  overflow: hidden;
 }
 
-
+#chart {
+  height: 25rem;
+}
 
 rect.bordered {
   stroke: #E6E6E6;
   stroke-width:2px;   
 }
 
-text.mono {
+text.mono, .axis text {
   font-size: 9pt;
   font-family: Consolas, courier;
   fill: #aaa;
@@ -116,4 +164,14 @@ text.axis-workweek {
 
 text.axis-worktime {
   fill: #fff;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.columns:last-child:not(:first-child) {
+    float: left;
 }
