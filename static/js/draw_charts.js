@@ -75,11 +75,11 @@ function sensor_radio(data) {
   $('#chart-opts').append("<div class='row'><fieldset class='sensors'>");
   $("<div class='large-12 columns'><legend>Select a Sensor</legend></div></div>")
     .appendTo("fieldset.sensors");
-  data.forEach(function (sensor) {
+  $.each(data, function (sensor, name) {
      $(document.createElement('input')).attr({
         name:  'sensor', value: sensor, type:  'radio'
      }).appendTo("fieldset.sensors");
-    $("<label for='"+sensor+"'>"+sensor+"</label></div>")
+    $("<label for='"+sensor+"'>"+name+"</label></div>")
       .appendTo("fieldset.sensors");
     if (i == 1) {
       $("input[name=sensor][value=" + sensor + "]").prop('checked', true);

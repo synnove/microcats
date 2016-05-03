@@ -16,6 +16,10 @@ app.config['IMG_FOLDER'] = IMG_FOLDER
 def load_user():
     user_info = json.loads(request.headers.get('X-KVD-Payload'))
     g.username = user_info['user']
+    g.translation = {"BAT": "Battery", "CO2": "Carbon Dioxide",
+		      "HUMB": "Humidity", "O3": "Ozone",
+		      "TCA": "Temperature", "NO2": "Nitrogen Dioxide",
+		      "CO": "Carbon Monoxide"}
 
 # VISIBLE PAGES BELOW -----------------------------------------------------------
 
@@ -119,11 +123,11 @@ def get_stations():
 
 @app.route("/sensors")
 def get_sensors():
-  sensor_json = {'sensors': []}
+  sensor_json = {'sensors': {}}
   query = db.get_sensor_list()
 
   for i, sensor in query:
-    sensor_json['sensors'].append(sensor)
+    sensor_json['sensors'][sensor] = g.translation[sensor]
   return jsonify(sensor_json)
 
 @app.route("/readings/<attr>", methods=['GET', 'POST'], 

@@ -99,8 +99,16 @@ i.fi-info.large {
 }
 
 #container {
+  position: relative;
   margin-top: 1%;
   height: 90%;
+  width: 100em;
+}
+
+.container-mini {
+  position: relative;
+  height: 80%;
+  width: 100%;
 }
 
 #controls, #debug-panel, #about, .info {
@@ -113,6 +121,7 @@ i.fi-info.large {
 
 #controls, #debug-panel {
   height: 100%;
+  width: 100%;
   padding: 0.5em 1em;
 }
 
@@ -138,13 +147,13 @@ i.fi-info.large {
 
 #map, #chart {
   border: 1px solid #ffffff;
-  height: 30rem;
   background-color: #333333;
   overflow: hidden;
+  height: 100%;
 }
 
 #chart {
-  height: 25rem;
+  height: 100%;
 }
 
 rect.bordered {
