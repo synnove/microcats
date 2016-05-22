@@ -4,11 +4,11 @@ html, body {
 }
 
 body {
-  background-color: #000000;
+  background-color: #ffffff;
 }
 
 h1, h4 {
-  color: #ffffff;
+  color: #005ce6;
   font-family: 'Ubuntu' !important;
 }
 
@@ -21,15 +21,16 @@ select, .input-group [type='date'] {
 }
 
 label {
-  color: #ffffff;
+  color: #000000;
 }
 
 legend {
   margin: 0;
 }
 
-i.fi-info.large {
-  font-size: 2em;
+span.right {
+  text-align: right;
+  display:block;
 }
 
 .row {
@@ -45,7 +46,8 @@ i.fi-info.large {
 
 .button[disabled] {
   opacity: 0.75;
-  color: #000000;
+  background-color: #555555;
+  color: #ffffff;
 }
 
 .input-group-field {
@@ -53,7 +55,7 @@ i.fi-info.large {
 }
 
 .top-bar {
-  background-color: #555555;
+  background-color: #5c76a3;
   color: #ffffff;
   font-size: 0.8rem;
   padding-left: 2em;
@@ -68,14 +70,18 @@ i.fi-info.large {
 
 .side-nav {
   position: absolute;
-  background-color: #222222;
+  background-color: #405272;
   color: #ffffff;
   font-size: 0.8rem;
   float: left;
-  z-index: 10;
+  z-index: 100;
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s linear 0.5s,opacity 0.5s linear;
+}
+
+.side-nav a {
+  color: #ffffff;
 }
 
 .side-nav-toggle {
@@ -91,7 +97,7 @@ i.fi-info.large {
 .side-nav ul li {
   display: block;
   padding: 0.8em 7em 0.8em 3em;
-  border-bottom: 1px solid #333333;
+  border-bottom: 1px solid #374762;
 }
 
 .side-nav ul li:last-child {
@@ -112,9 +118,8 @@ i.fi-info.large {
 }
 
 #controls, #debug-panel, #about, .info {
-  background-color: #333333;
-  border: 1px solid #555555;
-  color: #ffffff;
+  background-color: #eeeeee;
+  color: #000000;
   font-size: 0.8em;
   margin-bottom: 0.5em;
 }
@@ -142,37 +147,35 @@ i.fi-info.large {
 }
 
 #controls [type='checkbox'] + label, #controls [type='radio'] + label {
-  color: #ffffff;
+  color: #000000;
 }
 
-#map, #chart {
-  border: 1px solid #ffffff;
-  background-color: #333333;
+#map, .chart, #feed {
+  background-color: #eeeeee;
+  color: #555555;
   overflow: hidden;
   height: 100%;
 }
 
-#chart {
-  height: 100%;
+.chart.small {
+  color: #555555;
+  height: 15rem;
+}
+
+#feed {
+  font-family: 'Ubuntu Mono' !important;
+  overflow-y: scroll;
 }
 
 rect.bordered {
-  stroke: #E6E6E6;
+  stroke: #e6e6e6;
   stroke-width:2px;   
 }
 
 text.mono, .axis text {
   font-size: 9pt;
   font-family: Consolas, courier;
-  fill: #aaa;
-}
-
-text.axis-workweek {
-  fill: #fff;
-}
-
-text.axis-worktime {
-  fill: #fff;
+  fill: #555555;
 }
 
 .axis path, .axis line {
@@ -183,4 +186,45 @@ text.axis-worktime {
 
 .columns:last-child:not(:first-child) {
     float: left;
+}
+
+.accordion-title {
+  background-color: #5c76a3;
+  color: #ffffff;
+  font-size: 0.8rem;
+  padding: 0.8em 2em;
+}
+
+.accordion-title:hover, .accordion-title:focus {
+  background-color: #39414e;
+  color: #ffffff;
+  font-size: 0.8rem;
+}
+
+.accordion-content {
+  padding: 0;
+  background-color: #eeeeee;
+}
+
+.d3-tip {
+  position: relative;
+  font-family: 'Ubuntu Mono';
+  font-size: 0.8em;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.d3-tip:after {
+  content: '';
+  position: absolute;
+  left: 47%;
+  top: 100%;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid rgba(0, 0, 0, 0.9);
+  clear: both;
 }

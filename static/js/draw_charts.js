@@ -28,6 +28,8 @@ $("select").on("change", function() {
   draw();
 });
 
+var canvas = ".chart";
+
 function draw() {
   var viz = $("select option:selected").val();
   if (viz == "dh-chart") {
@@ -39,14 +41,14 @@ function draw() {
 
     function check_dh_vars(station, sensor) {
       if(sensor && station){
-        draw_dhchart(station, sensor, time_start, time_end, timeframe);
+        draw_dhchart(canvas, station, sensor, time_start, time_end, timeframe);
       }
     }
     setTimeout(function() {
       var station = $('input[name=station]:checked').val();
       var sensor = $('input[name=sensor]:checked').val();
       check_dh_vars(station,sensor);
-    },1000);
+    },2000);
   } else if (viz == "line-graph") {
     var time = moment($("input[type='datetime-local']").val());
     var time_start = time.format('YYYY-MM-DD ') + "00:00:00";
@@ -55,7 +57,7 @@ function draw() {
 
     function check_lg_vars(stations, sensor) {
       if(sensor && stations){
-        draw_linegraph(stations, sensor, time_start, time_end);
+        draw_linegraph(canvas, stations, sensor, time_start, time_end);
       }
     }
     setTimeout(function() {

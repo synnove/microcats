@@ -28,11 +28,12 @@ def on_message(client, userdata, msg):
   format_date = message["datetime"].split("+")[0]
   timestamp = datetime.strptime(format_date, '%Y-%m-%dT%H:%M:%S')
   sid = db.get_id_from_secret(station_secret)
-  if (not sid):
-    sid = db.new_station(station_secret)
-    print_log("Add new sensor with ID " + str(sid))
-  if (sensor != "ACC"):
+  if (sid and sensor != "ACC" and sensor != "STR"):
     db.insert_data(sid, sensor, value, timestamp)
+  if (not sid):
+    sid = "-"
+    #sid = db.new_station(station_secret)
+    #print_log("Add new sensor with ID " + str(sid))
   print_log("receive: sid: {} | sensor: {} | value: {} | timestamp: {}".format(sid,sensor,value,timestamp))
 
 mqtt = mqtt.Client()

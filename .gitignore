@@ -1,3 +1,8 @@
 *.pw
+*.pyc
+*.ini
+*.txt
 *.png
 *.jpg
+*.gif
+*.sock

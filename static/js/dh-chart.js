@@ -1,11 +1,11 @@
-function draw_dhchart(station, sensor, time_start, time_end, timeframe) {
+function draw_dhchart(canvas, station, sensor, time_start, time_end, timeframe) {
 
   // lets set some variables and create our svg
   var margin = { top: 30, right: 10, bottom: 50, left: 90 },
-    width = $("#chart").width() + margin.left + margin.right,
-    height = $("#chart").height();
+    width = $(canvas).width() + margin.left + margin.right,
+    height = $(canvas).height();
 
-  var svg = d3.select("#chart").append("svg")
+  var svg = d3.select(canvas).append("svg")
     .attr("width", width)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -89,8 +89,7 @@ function draw_dhchart(station, sensor, time_start, time_end, timeframe) {
         .attr("y", function (d, i) { return i * gridSize; })
         .style("text-anchor", "end")
         .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
-        .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? 
-          "yLabel mono axis axis-workweek" : "yLabel mono axis"); });
+        .attr("class", "yLabel mono axis");
 
       var dateLabels = svg.selectAll(".xLabel")
         .data(dates)
@@ -100,8 +99,7 @@ function draw_dhchart(station, sensor, time_start, time_end, timeframe) {
         .attr("y", 0)
         .style("text-anchor", "middle")
         .attr("transform", "translate(" + gridSize / 2 + ", -6)")
-        .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? 
-	  "xLabel mono axis axis-worktime" : "xLabel mono axis"); });
+        .attr("class", "xLabel mono axis");
     }
 
 
@@ -122,7 +120,6 @@ function draw_dhchart(station, sensor, time_start, time_end, timeframe) {
     }
 
     // get the data from the server and process it
-    console.log(query_url);
     d3.json(query_url, function(data) {
       if (data.hasOwnProperty('results')) {
 	svg.selectAll("text.warning").remove();
@@ -143,7 +140,6 @@ function draw_dhchart(station, sensor, time_start, time_end, timeframe) {
 	    record.month += 12;
 	  }
       	  record.date = date.date();
-	  console.log(record.date, "|", record.month);
       	});
 
       	var colorScale = d3.scale.quantile()
@@ -160,8 +156,8 @@ function draw_dhchart(station, sensor, time_start, time_end, timeframe) {
 	  cards.enter().append("rect")
       	    .attr("x", function(d) {return ((d.hour - 1) * gridSize) + gridSize;})
       	    .attr("y", function(d) {return ((d.day - 1) * gridSize) + gridSize;})
-      	    .attr("rx", 2)
-      	    .attr("ry", 2)
+      	    .attr("rx", 5)
+      	    .attr("ry", 5)
       	    .attr("class", "block bordered")
       	    .attr("width", gridSize)
       	    .attr("height", gridSize)
@@ -174,8 +170,8 @@ function draw_dhchart(station, sensor, time_start, time_end, timeframe) {
 	  cards.enter().append("rect")
       	    .attr("x", function(d) {return ((d.date - 2) * gridSize) + gridSize;})
       	    .attr("y", function(d) {return ((d.month - 1) * gridSize) + gridSize;})
-      	    .attr("rx", 2)
-      	    .attr("ry", 2)
+      	    .attr("rx", 5)
+      	    .attr("ry", 5)
       	    .attr("class", "block bordered")
       	    .attr("width", gridSize)
       	    .attr("height", gridSize)

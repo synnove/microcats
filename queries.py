@@ -10,6 +10,39 @@ def get_id_from_name(name):
   else:
       return None
 
+def check_user_exists(username):
+  conn = db_connect()
+  cur = conn.cursor()
+  cur.execute("""select * from thesis.users where uid = %s""", (username,))
+  rows = cur.fetchone()
+  if (rows):
+    return True
+  return False
+
+def add_new_user(username, mail, name):
+  user = check_user_exists(username)
+  if (not user):
+    conn = db_connect()
+    cur = conn.cursor()
+    cur.execute("""insert into thesis.users (uid, mail, name) values (%s,%s,%s)"""
+      , (username,mail, name))
+    conn.commit()
+  else:
+    conn = db_connect()
+    cur = conn.cursor()
+    cur.execute("""update thesis.users set mail = %s, name = %s where uid = %s"""
+      , (mail, name, username))
+    conn.commit()
+
+def get_admin_emails():
+  conn = db_connect()
+  cur = conn.cursor()
+  cur.execute("""select mail from thesis.users where role = %s""", ('admin',))
+  rows = cur.fetchall()
+  if (rows):
+    return [mail[0] for mail in rows]
+  return []
+
 def get_id_from_secret(secret):
   conn = db_connect()
   cur = conn.cursor()
@@ -169,6 +202,17 @@ def get_hourly_average(sid, attr, time_start, time_end):
   else:
       return None
 
+def get_uptime(sid):
+  conn = db_connect()
+  cur = conn.cursor()
+  cur.execute("""select date_trunc('day', time), count(*) from thesis.data where
+    sid = %s and sensor = %s group by date_trunc('day', time)""", (sid, 'BAT'))
+  rows = cur.fetchall()
+  if (rows):
+    return rows
+  else:
+    return None
+
 def new_station(secret):
   conn = db_connect()
   cur = conn.cursor()
@@ -186,7 +230,7 @@ def insert_data(sid, sensor, value, time):
 
 def get_pw():
   """ reads password from file """
-  f = open('pgsql.pw', 'r')
+  f = open('/home/s4367459/microcats/pgsql.pw', 'r')
   pw = f.read()
   f.close()
   return pw.rstrip()

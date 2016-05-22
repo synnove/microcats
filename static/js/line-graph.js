@@ -1,12 +1,16 @@
-function draw_linegraph(stations, sensor, time_start, time_end) {
+function draw_linegraph(canvas, stations, sensor, time_start, time_end) {
   var margin = { top: 45, right: 50, bottom: 45, left: 50 },
-    width = $("#chart").width() - margin.right - margin.left,
-    height = $("#chart").height() - margin.top - margin.bottom,
+    height = $(canvas).height() - margin.top - margin.bottom,
     colors = ["#4b8ad7","#de2536","#fbe97a",
       "#7fcdbb","#41b6c4","#1d91c0",
       "#225ea8","#253494","#081d58"];
+  if ($(canvas).hasClass("small")) {
+    var width = $(canvas).parent().parent().width() - margin.right - margin.left;
+  } else {
+    var width = $(canvas).width() - margin.right - margin.left;
+  }
 
-  var svg = d3.select("#chart").append("svg")
+  var svg = d3.select(canvas).append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -23,20 +27,12 @@ function draw_linegraph(stations, sensor, time_start, time_end) {
         .ticks(24);
 
       var tx = "translate(" + margin.left + "," + (height + margin.top) + ")";
-      console.log("transform: " + tx);
       svg.append("g")
         .call(xAxis)
         .attr("class", "x axis")
         .attr("transform", tx);
 
-      svg.append("text")
-        .attr("class", "title mono")
-        .attr("text-anchor", "middle")
-        .attr("transform", "translate(260, 20)")
-        .text("Graph of " + sensor + " values over 24 hours");
-
       var ty = "translate(" + margin.left + "," + margin.top + ")";
-      console.log("transform: " + ty);
       svg.append("g")
         .attr("class", "y axis")
         .attr("transform", ty);
@@ -120,10 +116,9 @@ function draw_linegraph(stations, sensor, time_start, time_end) {
   });
 
   function get_all_data(stations, sensor, time_start, time_end) {
-    console.log(stations);
     var q = d3_queue.queue()
     stations.forEach(function (station) {
-      q.defer(d3.json, "https://microcats.uqcloud.net/average/"
+      q.defer(d3.json, "https://microcats.uqcloud.net/hour-average/"
         +station+"/"+sensor+"/"+time_start+"/"+time_end);
     });
     q.awaitAll(draw_lines);

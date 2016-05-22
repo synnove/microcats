@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="large-12 columns">
+      <div id="controls">
+	I'm interesting! I update every minute! The sensors only send data every 10 minutes though!
+      </div>
+    </div>
+    <div class="large-12 columns container-mini">
+      <div id="feed">
+	{% for msg in msgs %}
+	    <span style="margin-left:2em;">{{ msg['timestamp'] }} &emsp;</span>
+	    node_id: {{ msg['sid'] }} &emsp;
+	    <span style="display: inline-block;min-width:7em;">sensor: {{ msg['sensor'] }} &emsp;</span>
+	    value: {{ msg['value'] }}<br>
+	{% endfor %}
+      </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+  <script type="text/javascript">
+    window.setTimeout(function(){ document.location.reload(true); }, 30000);
+  </script>
+{% endblock %}

@@ -15,7 +15,11 @@ app.config['IMG_FOLDER'] = IMG_FOLDER
 @app.before_request
 def load_user():
     user_info = json.loads(request.headers.get('X-KVD-Payload'))
+    g.userinfo = user_info
     g.username = user_info['user']
+    g.mail = user_info['email']
+    g.name = "{} {}".format(user_info['firstname'], user_info['lastname'])
+    db.add_new_user(g.username, g.mail, g.name)
     g.translation = {"BAT": "Battery", "CO2": "Carbon Dioxide",
 		      "HUMB": "Humidity", "O3": "Ozone",
 		      "TCA": "Temperature", "NO2": "Nitrogen Dioxide",
@@ -27,19 +31,18 @@ def load_user():
 @app.route("/")
 @app.route("/map")
 def map_page():
+  debug = None
   sensors = db.get_sensor_list()
-  debug = sensors
 
-  return render_template("maps.html", page_title="im a map",
+  return render_template("maps.html", page_title="microcats | map view",
     site_name="microcats", username=g.username,
     sensors=sensors,
     debug=debug)
 
 # about - lists all sensors + statistics
-# TODO - add links to individual sensor pages
 @app.route("/about")
 def about_page():
-  debug = ""
+  debug = None
   station_list = db.get_all_station_info()
   station_info = []
   for sid, desc, name, x, y in station_list:
@@ -54,9 +57,27 @@ def about_page():
     station["status"] = get_station_status(sid)
     station_info.append(station)
 
-  return render_template("about.html", page_title="about me",
+  return render_template("about.html", page_title="microcats | sensors",
     site_name="microcats", username=g.username,
     station_info=station_info,
+    debug=debug)
+
+# feed - view stream of messages coming in from meshlium
+@app.route("/feed")
+def feed_page():
+  debug = g.userinfo
+  msgs = []
+  with app.open_resource('logs/mqtt.log') as f:
+    for line in f:
+      info = {}
+      bits = line.strip().split("|")
+      for bit in bits:
+	info[bit.split(":",1)[0].strip()] = bit.split(":",1)[1].strip()
+      msgs.append(info)
+
+  return render_template("feed.html", page_title="microcats | data feed",
+    site_name="microcats", username=g.username,
+    msgs=msgs,
     debug=debug)
 
 # viz - view visualisations
@@ -66,14 +87,14 @@ def visualisations_page():
   station_list = db.get_all_station_info()
   sensor_list = db.get_sensor_list()
 
-  return render_template("graphs.html", page_title="im lots of things",
+  return render_template("graphs.html", page_title="microcats | visualisations",
     site_name="microcats", username=g.username,
     station_list=station_list,
     sensor_list=sensor_list,
     debug=debug)
 
 # shows information about each specific sensor
-@app.route("/<name>", 
+@app.route("/sensor/<name>", 
   methods=['GET', 'POST'])
 def show_station_info(name):
   debug = []
@@ -92,15 +113,15 @@ def show_station_info(name):
   station["last"] = db.get_last_reading_time(sid)
   station["status"] = get_station_status(sid)
   vals = get_station_stats(sid)
-  return render_template("station.html", page_title="im just one thing",
+  return render_template("station.html", page_title="microcats | " + name,
     site_name="microcats", username=g.username, 
-    station=station, vals=vals,
+    station=station, vals=vals, translations=g.translation,
     debug=debug)
 
 # progress seminar presentation
 @app.route("/pp")
 def progress_seminar_presentation():
-  return render_template("progress_seminar.html", page_title="look at me")
+  return render_template("progress_seminar.html", page_title="thesis progress seminar")
 
 # API PAGES BELOW -----------------------------------------------------------
 
@@ -127,7 +148,7 @@ def get_sensors():
   query = db.get_sensor_list()
 
   for i, sensor in query:
-    sensor_json['sensors'][sensor] = g.translation[sensor]
+    sensor_json['sensors'][sensor] = g.translation.get(sensor, "")
   return jsonify(sensor_json)
 
 @app.route("/readings/<attr>", methods=['GET', 'POST'], 
@@ -194,6 +215,17 @@ def get_readings_daily_average(sid, attr, time_from, time_to):
     result_json['results'].append(sensor_data)
   return jsonify(result_json)
 
+@app.route("/uptime/<sid>", methods=['GET', 'POST'])
+def get_station_uptime(sid):
+  result_json = {'results': {}}
+  data = db.get_uptime(int(sid))
+  if (not data):
+    return jsonify({ 'err': "No results found for query" })
+  for time, count in data:
+    date = str(time).split(" ", 1)[0]
+    result_json['results'][date] = count
+  return jsonify(result_json)
+
 @app.route('/img/<path:filename>')
 def serve_static(filename):
   return send_from_directory(app.config['IMG_FOLDER'], filename)
@@ -221,7 +253,7 @@ def get_station_status(sid):
   if last:
     diff = datetime.now() - last
     min_diff = abs(divmod(diff.total_seconds(), 60)[0])
-    if min_diff < 15:
+    if min_diff < 20:
       return "Active"
   return "Inactive"
 

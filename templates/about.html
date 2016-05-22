@@ -1,14 +1,10 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <div id="about" class="large-offset-1 large-10 columns end">
-    <h4 class="text-center">About the project</h4>
-    {{ debug }}
-  </div>
   {% for station in station_info %}
     <div class="large-4 columns end">
       <div class="info">
-        <b><a href="https://microcats.uqcloud.net/{{ station.name }}">
+        <b><a href="https://microcats.uqcloud.net/sensor/{{ station.name }}">
         <i class="fi-info"></i> STATION INFORMATION</a></b><br>
         Name: {{ station.name }}<br>
         ID: <span class="id">{{ station.sid }}</span><br>
