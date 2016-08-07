@@ -1,16 +1,17 @@
 from flask import Flask
 from flask import render_template, request, redirect, send_file, url_for, g
-from flask import send_from_directory, jsonify
+from flask import flash, send_from_directory, jsonify
 from datetime import datetime, timedelta
 import json
 import psycopg2
 import os
 import queries as db
-app = Flask(__name__)
 
+app = Flask(__name__)
 
 IMG_FOLDER = os.path.join(os.getcwd(), 'static', 'img')
 app.config['IMG_FOLDER'] = IMG_FOLDER
+app.secret_key = 'supersupersupersecret'
 
 @app.before_request
 def load_user():
@@ -19,7 +20,9 @@ def load_user():
     g.username = user_info['user']
     g.mail = user_info['email']
     g.name = "{} {}".format(user_info['firstname'], user_info['lastname'])
-    db.add_new_user(g.username, g.mail, g.name)
+    db.add_or_update_user(g.username, g.mail, g.name)
+    g.isadmin = db.check_user_admin(g.username)
+    #TODO move this into the database
     g.translation = {"BAT": "Battery", "CO2": "Carbon Dioxide",
 		      "HUMB": "Humidity", "O3": "Ozone",
 		      "TCA": "Temperature", "NO2": "Nitrogen Dioxide",
@@ -36,7 +39,8 @@ def map_page():
 
   return render_template("maps.html", page_title="microcats | map view",
     site_name="microcats", username=g.username,
-    sensors=sensors,
+    sensors=sensors, translations=g.translation,
+    isadmin = g.isadmin,
     debug=debug)
 
 # about - lists all sensors + statistics
@@ -60,12 +64,13 @@ def about_page():
   return render_template("about.html", page_title="microcats | sensors",
     site_name="microcats", username=g.username,
     station_info=station_info,
+    isadmin = g.isadmin,
     debug=debug)
 
 # feed - view stream of messages coming in from meshlium
 @app.route("/feed")
 def feed_page():
-  debug = g.userinfo
+  debug = None
   msgs = []
   with app.open_resource('logs/mqtt.log') as f:
     for line in f:
@@ -78,12 +83,13 @@ def feed_page():
   return render_template("feed.html", page_title="microcats | data feed",
     site_name="microcats", username=g.username,
     msgs=msgs,
+    isadmin = g.isadmin,
     debug=debug)
 
 # viz - view visualisations
 @app.route("/viz")
 def visualisations_page():
-  debug = db.get_sensor_list()
+  debug = None
   station_list = db.get_all_station_info()
   sensor_list = db.get_sensor_list()
 
@@ -91,13 +97,14 @@ def visualisations_page():
     site_name="microcats", username=g.username,
     station_list=station_list,
     sensor_list=sensor_list,
+    isadmin = g.isadmin,
     debug=debug)
 
 # shows information about each specific sensor
 @app.route("/sensor/<name>", 
   methods=['GET', 'POST'])
-def show_station_info(name):
-  debug = []
+def station_info_page(name):
+  debug = None
   sid = db.get_id_from_name(name)
   station_info = db.get_station_info(sid)
   if (not station_info):
@@ -116,6 +123,77 @@ def show_station_info(name):
   return render_template("station.html", page_title="microcats | " + name,
     site_name="microcats", username=g.username, 
     station=station, vals=vals, translations=g.translation,
+    isadmin = g.isadmin,
+    debug=debug)
+
+# api documentation guide
+@app.route("/doco")
+def api_doco_page():
+  debug = None
+  url = "https://microcats.uqcloud.net"
+  command_list = [
+    {"path": "/get/stations", 
+      "desc": """This query returns a list of stations and information about 
+	    each station."""},
+    {"path": "/get/sensors", 
+      "desc": """ This query returns a list of codes for each sensor type 
+      attached to the sensor nodes, along with a translation of the variable 
+      it measures."""},
+    {"path": "/get/uptime/<sid>",
+      "desc":  """This query returns a count of the number of readings sent by a station per day for the period of one year. The sensor id must be 
+      specified. """},
+    {"path": "/get/readings/<attr>",
+      "desc": """This query returns readings from all stations for the
+      specified sensor type. Without any additional parameters given, it
+      returns the most recently obtained readings."""},
+    {"path": "/get/readings/<attr>/<time_from>",
+      "desc":  """If the optional <time_from> parameter is given, this
+      query returns all readings for the specified sensor type from all
+      stations, from the time specified to the present."""},
+    {"path": "/get/readings/<attr>/<time_from>/<time_to>",
+      "desc":  """If both the time_from and time_to parameters are given, 
+      this query returns all readings for the specified sensor type from all 
+      stations, between (and including) the start and end times."""},
+    {"path": "/get/hour-average/<sid>/<attr>/<time_from>/<time_to>",
+      "desc": """This query returns hourly aggregated values from readings
+      for a specified station and sensor, for every hour from the start time
+      to the end time."""},
+    {"path": "/get/day-average/<sid>/<attr>/<time_from>/<time_to>",
+      "desc":  """This query returns daily aggregated values from readings
+      for a specified station and sensor, for every day from the start time
+      to the end time."""}
+  ]
+  return render_template("doco.html", page_title="microcats | api documentation",
+    site_name="microcats", username=g.username,
+    url=url, command_list=command_list,
+    isadmin = g.isadmin,
+    debug=debug)
+
+# user management page
+@app.route("/manage/users")
+def user_management_page():
+  debug = None
+  if (not g.isadmin):
+      return redirect(url_for('map_page'))
+  req = db.get_all_users()
+  admins = []
+  users = []
+  for _, uid, role, _, name in req:
+    info = {}
+    info['uid'] = uid
+    info['role'] = role
+    if (name):
+      info['name'] = name
+    else:
+      info['name'] = uid
+    if (role == 'user'):
+      users.append(info)
+    else:
+      admins.append(info)
+  return render_template("users.html", page_title="microcats | user management",
+    site_name="microcats", username=g.username,
+    users=users, admins=admins,
+    isadmin = g.isadmin,
     debug=debug)
 
 # progress seminar presentation
@@ -125,7 +203,8 @@ def progress_seminar_presentation():
 
 # API PAGES BELOW -----------------------------------------------------------
 
-@app.route("/stations")
+# return station information as json
+@app.route("/get/stations")
 def get_stations():
   station_json = {'stations': []}
   query = db.get_all_station_info()
@@ -142,7 +221,8 @@ def get_stations():
 
   return jsonify(station_json)
 
-@app.route("/sensors")
+# return sensor information as json
+@app.route("/get/sensors")
 def get_sensors():
   sensor_json = {'sensors': {}}
   query = db.get_sensor_list()
@@ -151,11 +231,13 @@ def get_sensors():
     sensor_json['sensors'][sensor] = g.translation.get(sensor, "")
   return jsonify(sensor_json)
 
-@app.route("/readings/<attr>", methods=['GET', 'POST'], 
+# return readings from all sensors as json
+# optional: specify time from and time to to limit result set
+@app.route("/get/readings/<attr>", methods=['GET', 'POST'], 
   defaults={'time_from': None, 'time_to': None})
-@app.route("/readings/<attr>/<time_from>", methods=['GET', 'POST'], 
+@app.route("/get/readings/<attr>/<time_from>", methods=['GET', 'POST'], 
   defaults={'time_to': None})
-@app.route("/readings/<attr>/<time_from>/<time_to>", 
+@app.route("/get/readings/<attr>/<time_from>/<time_to>", 
   methods=['GET', 'POST'])
 def get_readings(attr, time_from, time_to):
   if (attr == 'CAT'):
@@ -185,7 +267,8 @@ def get_readings(attr, time_from, time_to):
       result_json['results'][str(sid)] = sensor_data
     return jsonify(result_json)
 
-@app.route("/hour-average/<sid>/<attr>/<time_from>/<time_to>", 
+# return hourly aggregated values calculated from readings from a specific station+sensor as json
+@app.route("/get/hour-average/<sid>/<attr>/<time_from>/<time_to>", 
   methods=['GET', 'POST'])
 def get_readings_hourly_average(sid, attr, time_from, time_to):
   result_json = {'results': []}
@@ -200,7 +283,8 @@ def get_readings_hourly_average(sid, attr, time_from, time_to):
     result_json['results'].append(sensor_data)
   return jsonify(result_json)
 
-@app.route("/day-average/<sid>/<attr>/<time_from>/<time_to>", 
+# return daily aggregated values calculated from readings from a specific station+sensor as json
+@app.route("/get/day-average/<sid>/<attr>/<time_from>/<time_to>", 
   methods=['GET', 'POST'])
 def get_readings_daily_average(sid, attr, time_from, time_to):
   result_json = {'results': []}
@@ -215,7 +299,8 @@ def get_readings_daily_average(sid, attr, time_from, time_to):
     result_json['results'].append(sensor_data)
   return jsonify(result_json)
 
-@app.route("/uptime/<sid>", methods=['GET', 'POST'])
+# return count of readings sent by a specific station per day as json
+@app.route("/get/uptime/<sid>", methods=['GET', 'POST'])
 def get_station_uptime(sid):
   result_json = {'results': {}}
   data = db.get_uptime(int(sid))
@@ -226,10 +311,96 @@ def get_station_uptime(sid):
     result_json['results'][date] = count
   return jsonify(result_json)
 
+# FORM INTERACTION PAGES BELOW -----------------------------------------------
+
+# add new administrator
+@app.route('/_new_admin', methods=['GET', 'POST'])
+def add_new_admin():
+  result = None
+  msg = None
+  result_json = {'result': result, 'msg': msg}
+  uid = request.args.get('uid', -1, type=unicode)
+  name = request.args.get('name', -1, type=unicode)
+  mail = request.args.get('mail', -1, type=unicode)
+  query = db.add_new_admin(uid, name, mail)
+  if (not g.isadmin):
+    result = "error"
+    msg = "You don't have permissions to manage administrators!"
+    return jsonify(result_json)
+  else:
+    if (not query):
+      result = "error"
+      msg = "Could not add " + uid + " as administrator"
+    else:
+      result = "success"
+      msg = "Added " + uid + " as administrator"
+    result_json['result'] = result
+    result_json['msg'] = msg
+    return jsonify(result_json)
+
+# modify user privileges
+@app.route('/_mod_admin', methods=['GET', 'POST'])
+def mod_admin():
+  result = None
+  msg = None
+  result_json = {'result': result, 'msg': msg}
+  if (not g.isadmin):
+    result = "error"
+    msg = "You don't have permissions to manage administrators!"
+    return jsonify(result_json)
+  else:
+    uid = request.args.get('uid', -1, type=unicode)
+    act = request.args.get('action', -1, type=unicode)
+    if (act == "add"):
+      query = db.user_to_admin(uid)
+      if (not query):
+        result = "error"
+        msg = "Could not add " + uid + " as administrator"
+      else:
+        result = "success"
+        msg = "Added " + uid + " as administrator"
+    else:
+      query = db.admin_to_user(uid)
+      if (not query):
+        result = "error"
+        msg = "Could not remove administrator privileges from " + uid
+      else:
+        result = "success"
+        msg = "Removed administrator privileges from  " + uid
+    result_json['result'] = result
+    result_json['msg'] = msg
+    return jsonify(result_json)
+
+# modify station information
+@app.route('/_update_sensors', methods=['GET', 'POST'])
+def update_sensors():
+  if (not g.isadmin):
+    msg = "You don't have permissions to manage administrators!"
+  else:
+    [sid, field] = request.form['id'].split("-")
+    sid = int(sid)
+    val = request.form['value'].strip()
+
+    if (field == "name"):
+      msg = db.update_sensor_name(sid, val)
+    elif (field == "desc"):
+      msg = db.update_sensor_desc(sid, val)
+    elif (field == "coord"):
+      val = (" ").join(val.split(","))
+      msg = db.update_sensor_loc(sid, val)
+    else:
+      msg = "error"
+
+  return msg
+
+# MISC PAGES BELOW -----------------------------------------------------------
+
+# enable direct access of image files in static/img/
 @app.route('/img/<path:filename>')
 def serve_static(filename):
   return send_from_directory(app.config['IMG_FOLDER'], filename)
 
+# calculate and format highest, lowest, average readings for each sensor type
 def get_station_stats(sid):
   attrs = db.get_sensor_list()
   vals = {}
@@ -246,6 +417,7 @@ def get_station_stats(sid):
       vals[sensor].append("{0:.2f}".format(average))
   return vals
 
+# calculate station status (active/inactive)
 def get_station_status(sid):
   last = db.get_last_reading_time(sid)
   status = None

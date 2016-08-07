@@ -1,9 +1,9 @@
 .reveal section img {
   border: 0;
   border-radius: 10px;
-  padding: 2rem;
-  height: 22rem;
-  width: auto;
+  padding: 1rem;
+  box-shadow: 0 0 0;
+  background-color: #ffffff;
 }
 
 .reveal section ul {
@@ -12,4 +12,6 @@
 
 .reveal blockquote {
   font-size: 0.5em;
+  background-color: #ffffff;
+  border-radius: 10px;
 }

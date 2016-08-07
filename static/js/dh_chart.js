@@ -109,13 +109,13 @@ function draw_dhchart(canvas, station, sensor, time_start, time_end, timeframe) 
       gridSize = Math.floor(width / (hours.length + 1)) - 10;
       legendElementWidth = gridSize*2;
       drawWeek();
-      query_url = "https://microcats.uqcloud.net/hour-average/"+station+"/"
+      query_url = "https://microcats.uqcloud.net/get/hour-average/"+station+"/"
         +sensor+"/"+time_start+"/"+time_end;
     } else {
       gridSize = Math.floor(width / dates.length) - 10;
       legendElementWidth = gridSize*2;
       drawMonth();
-      query_url = "https://microcats.uqcloud.net/day-average/"+station+"/"
+      query_url = "https://microcats.uqcloud.net/get/day-average/"+station+"/"
 	+sensor+"/"+time_start+"/"+time_end;
     }
 

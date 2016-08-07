@@ -22,7 +22,7 @@ map.scrollWheelZoom.disable();
 map.keyboard.disable();
 
 // create sensor icons
-d3.json("https://microcats.uqcloud.net/stations", function (data) {
+d3.json("https://microcats.uqcloud.net/get/stations", function (data) {
   var active = L.icon({
       iconUrl: 'https://microcats.uqcloud.net/img/active.png',
       iconSize:     [35, 90],
@@ -62,7 +62,7 @@ d3.json("https://microcats.uqcloud.net/stations", function (data) {
 
 // create d3 layer
 
-d3.json("https://microcats.uqcloud.net/stations", function (data) {
+d3.json("https://microcats.uqcloud.net/get/stations", function (data) {
   var stations = {};
   var sensor = $('input[name=sensor]:checked').val();
   var buckets = [1,2,3,4,5,6,7,8,9];
@@ -121,7 +121,7 @@ d3.json("https://microcats.uqcloud.net/stations", function (data) {
 
   var drawCircles = function(stations, sensor) {
     clearAll();
-    query_url = "https://microcats.uqcloud.net/readings/"+sensor;
+    query_url = "https://microcats.uqcloud.net/get/readings/"+sensor;
     d3.json(query_url, function(data) {
       var station_data = [];
       Object.keys(stations).forEach(function(sid) {
@@ -189,47 +189,32 @@ d3.json("https://microcats.uqcloud.net/stations", function (data) {
     });
   }
 
-  var drawHex = function() {
+  var drawTopo = function(stations, sensor) {
     clearAll();
-    var color = ["#E9FF63", "#7DFF63", "#63F8FF", "#99FF63", "#CFFE63", 
-		  "#FFC263", "#FFC763", "#FF8E63", "#FF6464", "#95FF63",
-		  "#63FFCD", "#A2FF63", "#EBFF63", "#63FFC1", "#63FFA0",
-		  "#63E4FF", "#63FFFB", "#63F3FF", "#63CEFE"]
-    var width = $("#map").width() + 50;
-    var height = $("#map").height() + 100;
-    var MapColumns = 40;
-    var MapRows = 25;
-    var hexRadius = d3.min([width/((MapColumns + 0.5) * Math.sqrt(3)),
-      height/((MapRows + 1/3) * 1.5)]);
-    var hexbin = d3.hexbin().radius(hexRadius);
-    var points = [];
-    for (var i = 0; i < MapRows; i++) {
-      for (var j = 0; j < MapColumns; j++) {
-        points.push([hexRadius * j * 1.75, hexRadius * i * 1.5]);
-      }
-    }
-
-    svg.selectAll(".hexagon")
-      .data(hexbin(points))
-      .enter().append("path")
-      .attr("class", "hexagon")
-      .attr("d", function (d) {
-        return "M" + d.x + "," + d.y + hexbin.hexagon();
-      })
-      .attr("stroke", function (d,i) {
-        return "#444444";
-      })
-      .attr("stroke-width", "1px")
-      .attr("opacity", "0.3")
-      .style("fill", function (d,i) {
-        return color[i];
+    var color = d3.scale.linear()
+            .domain([10000, 50000, 100000])
+            .range(["#57b5cd", "#81b562", "#eb8d5d"]);
+    query_url = "https://microcats.uqcloud.net/get/readings/"+sensor;
+    d3.json(query_url, function(data) {
+      var station_data = [];
+      Object.keys(stations).forEach(function(sid) {
+	data.results[sid].forEach(function(result) {
+	  var reading = {}
+	  reading.lat = stations[sid].lat;
+	  reading.lng = stations[sid].lng;
+	  reading.count = result[sensor];
+	  station_data.push(reading);
+	});
       });
+      console.log(station_data);
+      var heat = L.heatLayer(station_data, {radius: 50}).addTo(map);
+    });
   }
 
   function clearAll() {
     svg.selectAll("circle").remove();
     svg.selectAll("text").remove();
-    svg.selectAll(".hexagon").remove();
+    svg.selectAll("rect").remove();
   }
 
   drawCircles(stations, sensor);
@@ -238,15 +223,16 @@ d3.json("https://microcats.uqcloud.net/stations", function (data) {
     if (this.value == "circles") {
       drawCircles(stations, sensor);
     } else {
-      drawHex();
+      drawTopo(stations, sensor);
     }
   });
 
   $('input[name=sensor]').on("change", function() {
+    var sensor = $('input[name=sensor]:checked').val();
     if ($('select').val() == "circles") {
-      var sensor = $('input[name=sensor]:checked').val();
       drawCircles(stations, sensor);
     } else {
+      drawTopo(stations, sensor);
     }
   });
 

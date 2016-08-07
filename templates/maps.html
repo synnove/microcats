@@ -14,16 +14,6 @@
           </label>
         </form></div>
 
-	<div class="large-3 columns"><form id="map-time">
-          <label>Select Visualisation Type
-	    <br>
-	    <select>
-    	      <option value="circles">Circles</option>
-    	      <option value="contour">Contour Map</option>
-    	    </select>
-          </label>
-        </form></div>
-
 	<div class="large-6 columns"><form id="viz-opts">
           <legend>Select a Sensor</legend>
           <fieldset>
@@ -31,7 +21,8 @@
 	      <input type="radio" name="sensor" value="{{ sensor }}"
     	      {% if i == 0 %}checked{% endif %}
     	      ></input>
-    	      <label for="{{ sensor }}">{{ sensor }}</label>
+    	      <label for="{{ sensor }}">{{ translations[sensor] }}</label>
+	      {% if i == 3 %}<br>{% endif %}
             {% endfor %}
           </fieldset>
         </form></div>
@@ -45,5 +36,6 @@
 {% endblock %}
 
 {% block javascript %}
+  <script src="../static/modules/Leaflet.heat/dist/leaflet-heat.js"></script>
   <script src="../static/js/map.js"></script>
 {% endblock %}

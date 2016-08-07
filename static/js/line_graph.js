@@ -1,7 +1,7 @@
 function draw_linegraph(canvas, stations, sensor, time_start, time_end) {
   var margin = { top: 45, right: 50, bottom: 45, left: 50 },
     height = $(canvas).height() - margin.top - margin.bottom,
-    colors = ["#4b8ad7","#de2536","#fbe97a",
+    colors = ["#4b8ad7","#de2536","#9900cc",
       "#7fcdbb","#41b6c4","#1d91c0",
       "#225ea8","#253494","#081d58"];
   if ($(canvas).hasClass("small")) {
@@ -17,6 +17,7 @@ function draw_linegraph(canvas, stations, sensor, time_start, time_end) {
 
   var draw_lines = function (error, all_data) {
     if (!(all_data[0].hasOwnProperty('err'))) {
+
       var x = d3.scale.linear()
         .domain([0, 23])
         .range([0, width]);
@@ -88,11 +89,6 @@ function draw_linegraph(canvas, stations, sensor, time_start, time_end) {
     } else {
       svg.selectAll(".legend").remove();
       svg.selectAll(".hour").remove();
-      svg.append("text")
-        .attr("class", "title mono warning")
-        .attr("text-anchor", "middle")
-        .attr("transform", "translate(400,220)")
-        .text("No results found with search parameters! Please try again!")
     }
   }
 
@@ -108,7 +104,9 @@ function draw_linegraph(canvas, stations, sensor, time_start, time_end) {
   });
   $("#viz-type").submit(function( event ) {
     event.preventDefault();
-    time = moment($("input[type='datetime-local']").val());
+    time = moment($("input[type='date']").val());
+    console.log("changed");
+    console.log(time);
     time_start = time.format('YYYY-MM-DD ') + "00:00:00";
     time_end = time.add(moment.duration({'days': 1}))
                 .format('YYYY-MM-DD ') + "23:00:00";
@@ -116,9 +114,10 @@ function draw_linegraph(canvas, stations, sensor, time_start, time_end) {
   });
 
   function get_all_data(stations, sensor, time_start, time_end) {
+    console.log("called");
     var q = d3_queue.queue()
     stations.forEach(function (station) {
-      q.defer(d3.json, "https://microcats.uqcloud.net/hour-average/"
+      q.defer(d3.json, "https://microcats.uqcloud.net/get/hour-average/"
         +station+"/"+sensor+"/"+time_start+"/"+time_end);
     });
     q.awaitAll(draw_lines);

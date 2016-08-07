@@ -19,7 +19,7 @@ def check_user_exists(username):
     return True
   return False
 
-def add_new_user(username, mail, name):
+def add_or_update_user(username, mail, name):
   user = check_user_exists(username)
   if (not user):
     conn = db_connect()
@@ -33,6 +33,55 @@ def add_new_user(username, mail, name):
     cur.execute("""update thesis.users set mail = %s, name = %s where uid = %s"""
       , (mail, name, username))
     conn.commit()
+
+def check_user_admin(username):
+  conn = db_connect()
+  cur = conn.cursor()
+  cur.execute("""select role from thesis.users where uid = %s""", (username,))
+  rows = cur.fetchone()
+  if (rows):
+    if (rows[0] == 'admin'):
+      return True
+  return False
+
+def admin_to_user(username):
+  conn = db_connect()
+  cur = conn.cursor()
+  try:
+    cur.execute("""update thesis.users set role = 'user' where uid = %s""", (username,))
+    conn.commit()
+  except Exception, e:
+    return False
+  return True
+
+def user_to_admin(username):
+  conn = db_connect()
+  cur = conn.cursor()
+  try:
+    cur.execute("""update thesis.users set role = 'admin' where uid = %s""", (username,))
+    conn.commit()
+  except Exception, e:
+    return False
+  return True
+
+def add_new_admin(username, name, email):
+  conn = db_connect()
+  cur = conn.cursor()
+  try:
+    cur.execute("""insert into thesis.users (uid, role, mail, name) values (%s, %s, %s, %s)""", (username,'admin',email,name))
+    conn.commit()
+  except Exception, e:
+    return False
+  return True
+
+def get_all_users():
+  conn = db_connect()
+  cur = conn.cursor()
+  cur.execute("""select * from thesis.users order by name asc""")
+  rows = cur.fetchall()
+  if (rows):
+      return rows
+  return False
 
 def get_admin_emails():
   conn = db_connect()
@@ -140,17 +189,6 @@ def get_lowest_reading(sid, attr):
   else:
       return None
 
-def get_(sid, attr):
-  conn = db_connect()
-  cur = conn.cursor()
-  cur.execute("""select min(value::numeric) from thesis.data where sid = %s and 
-    sensor = %s""", (sid, attr))
-  rows = cur.fetchall()
-  if (rows):
-      return rows[0][0]
-  else:
-      return None
-
 def get_average_reading(sid, attr):
   conn = db_connect()
   cur = conn.cursor()
@@ -212,6 +250,36 @@ def get_uptime(sid):
     return rows
   else:
     return None
+
+def update_sensor_name(sid, val):
+  conn = db_connect()
+  cur = conn.cursor()
+  try:
+    cur.execute("""update thesis.sensors set name = %s where sid = %s returning name""", (val, sid))
+    conn.commit()
+  except Exception, e:
+    return None
+  return cur.fetchone()[0]
+
+def update_sensor_desc(sid, val):
+  conn = db_connect()
+  cur = conn.cursor()
+  try:
+    cur.execute("""update thesis.sensors set description = %s where sid = %s returning description""", (val, sid))
+    conn.commit()
+  except Exception, e:
+    return None
+  return cur.fetchone()[0]
+
+def update_sensor_loc(sid, val):
+  conn = db_connect()
+  cur = conn.cursor()
+  try:
+    cur.execute("""update thesis.sensors set location = ST_GeomFromText('POINT(%s)', 900913) where sid = %s returning ST_AsText(location)""", (val, sid))
+    conn.commit()
+  except Exception, e:
+    return None
+  return cur.fetchone()[0]
 
 def new_station(secret):
   conn = db_connect()

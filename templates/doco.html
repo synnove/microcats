@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="large-8 large-offset-2 columns">
+      <div class="notes">
+	<b>Notes and clarifications:</b><br>
+	We refer to the Waspmote units as "stations".
+	This is to avoid confusion with "sensors", which refer to the
+	individual sensors attached to nodes for measuring environmental
+	variables. All time stamps must be in the format: YYYY-MM-DD HH:MM:SS.
+      </div>
+      {% for command in command_list %}
+	  <dt>{{ url }}{{ command['path'] }}</dt>
+	  <dd>
+	    {{ command['desc'] }}
+	  </dd>
+      {% endfor %}
+    </div>
+{% endblock %}

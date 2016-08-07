@@ -1,6 +1,6 @@
 // data loading
 
-d3.json("https://microcats.uqcloud.net/stations", function(json){
+d3.json("https://microcats.uqcloud.net/get/stations", function(json){
   station_radio(json.stations);
   $("select").on("change", function() {
     if (this.value == "dh-chart") {
@@ -11,7 +11,7 @@ d3.json("https://microcats.uqcloud.net/stations", function(json){
   });
 });
 
-d3.json("https://microcats.uqcloud.net/sensors", function(json){
+d3.json("https://microcats.uqcloud.net/get/sensors", function(json){
   sensor_radio(json.sensors);
   $("select").on("change", function() {
     sensor_radio(json.sensors);
@@ -85,6 +85,9 @@ function sensor_radio(data) {
       .appendTo("fieldset.sensors");
     if (i == 1) {
       $("input[name=sensor][value=" + sensor + "]").prop('checked', true);
+    }
+    if (i == 4) {
+      $("<br>").appendTo("fieldset.sensors");
     }
     i++;
   });

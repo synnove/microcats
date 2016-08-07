@@ -6,10 +6,10 @@
       <div class="info">
         <b><a href="https://microcats.uqcloud.net/sensor/{{ station.name }}">
         <i class="fi-info"></i> STATION INFORMATION</a></b><br>
-        Name: {{ station.name }}<br>
         ID: <span class="id">{{ station.sid }}</span><br>
-        Description: {{ station.desc }}<br>
-        Location: {{ station.location }}<br>
+        Name:	      <div id="{{ station.sid }}-name"  class="variable {% if isadmin %}edit{% endif %}"> {{ station.name }}</div><br>
+        Description:  <div id="{{ station.sid }}-desc"  class="variable {% if isadmin %}edit{% endif %}"> {{ station.desc }}</div><br>
+        Location:     <div id="{{ station.sid }}-coord" class="variable {% if isadmin %}edit{% endif %}"> {{ station.location }}</div><br>
         Deployed: {{ station.birthday }}<br>
         Last contact: {{ station.last }}<br>
         Status: {{ station.status }}<br>
@@ -35,4 +35,5 @@
 {% endblock %}
 
 {% block javascript %}
+  <script src="../static/js/sensors.js"></script>
 {% endblock %}

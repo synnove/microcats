@@ -12,11 +12,11 @@ h1, h4 {
   font-family: 'Ubuntu' !important;
 }
 
-select, .input-group [type='date'] {
+select, input[type='text'], input[type='email'], .input-group-field[type='date'] {
   height: 1.8em;
   margin: 0;
   margin-bottom: 0.5em;
-  padding: 0.1em;
+  padding: 0.1rem 0.5rem;
   font-size: 1em;
 }
 
@@ -213,7 +213,7 @@ text.mono, .axis text {
   padding: 0.5rem;
   background: rgba(0, 0, 0, 0.9);
   color: #fff;
-  border-radius: 2px;
+  border-radius: 5px;
 }
 
 .d3-tip:after {
@@ -227,4 +227,63 @@ text.mono, .axis text {
   border-right: 5px solid transparent;
   border-top: 5px solid rgba(0, 0, 0, 0.9);
   clear: both;
+}
+
+dt {
+  display: block;
+  background-color: #eeeeee;
+  padding: 0.3rem 2rem;
+  margin: 1rem;
+  margin-bottom: 0.5rem;
+  border-left: 10px solid #5c76a3;
+  font-size: 0.8em;
+}
+
+dd {
+  display: block;
+  padding: 0.3rem 5rem;
+  margin-bottom: 1rem;
+  font-size: 0.8em;
+}
+
+.notes {
+  margin: 1rem;
+  font-size: 0.8em;
+}
+
+.panel {
+  background-color: #eeeeee;
+  overflow: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.panel span.title {
+  display: block;
+  background-color: #ffffff;
+  font-weight: bold;
+}
+
+.panel form {
+  padding: 0.5rem 1rem;
+}
+
+.callout {
+  text-align: center;
+}
+
+.callout a {
+  float: right;
+}
+
+.variable {
+  display: inline-block;
+}
+
+.edit form input {
+  width: 10rem !important;
+}
+
+.edit span.tiny {
+  font-size: 0.5em;
 }

@@ -14,9 +14,13 @@
   <script src="../static/modules/foundation-6/js/foundation.js"></script>
   <script src="../static/modules/leaflet/leaflet.js"></script>
   <script src="../static/modules/moment.js"></script>
+  <script src="../static/modules/jquery.jeditable.js"></script>
   <script src="../static/modules/d3/d3.js"></script>
   <script src="https://d3js.org/d3.hexbin.v0.min.js"></script>  
   <script src="https://d3js.org/d3-queue.v2.min.js"></script>
+  <script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+  </script>
 </head>
 <body>
   <div class="top-bar">
@@ -33,7 +37,10 @@
       <li><a href="/map"><i class="fi-map"></i>&emsp;Map</a></li>
       <li><a href="/viz"><i class="fi-graph-bar"></i>&emsp;Graphs & Charts</a></li>
       <li><a href="/feed"><i class="fi-rss"></i>&emsp;Data Feed</a></li>
-      <li><a href="/feed"><i class="fi-page"></i>&emsp;API Doco</a></li>
+      <li><a href="/doco"><i class="fi-page"></i>&emsp;API Doco</a></li>
+      {% if isadmin %}
+	<li><a href="/manage/users"><i class="fi-torsos"></i>&emsp;Manage Users</a></li>
+      {% endif %}
     </ul>
   </div>
 

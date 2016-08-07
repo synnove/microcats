@@ -15,7 +15,7 @@ function draw_uptime(canvas, station) {
   var margin = {top: 30, right: 10, bottom: 10, left: 0 },
     width = $(canvas).parent().parent().width() + margin.left + margin.right,
     height = $(canvas).height(),
-    gridSize = Math.floor(width / 64);
+    gridSize = Math.floor(width / 66);
 
   var svg = d3.select(canvas).append("svg")
     .attr("width", width)
@@ -28,7 +28,7 @@ function draw_uptime(canvas, station) {
     colors = ['#ffffff', '#ced6e3', '#adbad1', '#8d9fbf', 
 	      '#6c84ac', '#536a93', '#405372'];
 
-    query_url = "https://microcats.uqcloud.net/uptime/"+station;
+    query_url = "https://microcats.uqcloud.net/get/uptime/"+station;
 
     d3.json(query_url, function(data) {
       if (data.hasOwnProperty('results')) {
@@ -81,14 +81,14 @@ function draw_uptime(canvas, station) {
 
 	svg.append("text")
     	  .text("A sensor node sends messages approximately every ten minutes - about 137 messages are expected per day.")
-    	  .attr("x", gridSize)
-    	  .attr("y", 12 * gridSize)
+    	  .attr("x", (gridSize * 9))
+    	  .attr("y", 9 * gridSize)
     	  .attr("class", "mono axis");
 
 	svg.append("text")
     	  .text("This visualisation tracks the uptime of the sensor node based on the number of messages sent each day.")
-    	  .attr("x", gridSize)
-    	  .attr("y", 13 * gridSize)
+    	  .attr("x", (gridSize * 9))
+    	  .attr("y", 10 * gridSize)
     	  .attr("class", "mono axis");
 
 	var legend = svg.selectAll(".legend")
